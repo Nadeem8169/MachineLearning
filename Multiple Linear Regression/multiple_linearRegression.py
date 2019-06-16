@@ -5,35 +5,53 @@ Created on Sat Jun 15 12:40:00 2019
 
 @author: nadeem
 """
-
 import numpy as np 
 import pandas as pd
 import matplotlib.pyplot as plt
 
 #importing the datasets
-dataset=pd.read_csv('50_Startups.csv')
-X=pd.DataFrame(dataset.iloc[:,:-1].values)
-Y=dataset.iloc[:,4].values
+dataset=pd.read_csv('Position_Salaries.csv')
+X=dataset.iloc[:,1].values
+X=X.reshape(-1,1)
+Y=dataset.iloc[:,2].values
 
-#Encoding the profit column or categorical data in numbers
-from sklearn.preprocessing import LabelEncoder,OneHotEncoder
-labelEncoder_X=LabelEncoder()
-X.iloc[:, 3]=labelEncoder_X.fit_transform(X.iloc[:, 3])
-
-#Avoiding the dummy variable trap
-X=X[:,1:]
-
-onehotEncoder=OneHotEncoder(categorical_features=[3])
-X=onehotEncoder.fit_transform(X).toarray()
-
-#spliting the datasets
-from sklearn.model_selection import train_test_split
-X_train,X_test,Y_train,Y_test=train_test_split(X,Y,test_size=0.2,random_state=0)
-
-#Fitting the Multiple Linear Regression to the Training set
+#fitting Linear REgression to the dataset
 from sklearn.linear_model import LinearRegression
-regressor=LinearRegression()
-regressor.fit(X_train,Y_train)
+Lin_reg=LinearRegression()
+Lin_reg.fit(X,Y)
 
-#predictin the test sets results
-Y_pred=regressor.predict(X_test)
+#Visualizing the Linear Linear
+plt.scatter(X,Y,color="red")
+plt.plot(X,Lin_reg.predict(X),color='blue')
+plt.title("Sales vs Level(Linear Regression)")
+plt.xlabel("Level")
+plt.ylabel("Salary")
+plt.show()
+
+
+#fitting Polinomial REgression to the dataset
+from sklearn.preprocessing import PolynomialFeatures
+Poly_reg=PolynomialFeatures(degree=4)
+X_poly=Poly_reg.fit_transform(X)
+lin_reg1=LinearRegression()
+lin_reg1.fit(X_poly,Y)
+
+#Visualizing Ploinomial Regression Model
+plt.scatter(X,Y,color="red")
+plt.plot(X,lin_reg1.predict(Poly_reg.fit_transform(X)),color='blue')
+plt.title("Sales vs Level(Polynomial Regression)")
+plt.xlabel("Level")
+plt.ylabel("Salary")
+plt.show()
+
+#Predicting the results using the Linear Regression
+Lin_reg.predict([[6.5]])
+
+
+
+#Predicting the results using the Linear Regression
+lin_reg1.predict(Poly_reg.fit_transform([[6.5]]))
+
+
+
+
